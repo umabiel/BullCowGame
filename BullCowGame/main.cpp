@@ -7,14 +7,19 @@
 //
 
 #include <iostream>
+#include <string>
+#include "FBullCowGame.hpp"
 
-using namespace std;
+using FText = std::string;
+using int32 = int;
 
 // Prototipos de funciones
 void PrintIntro();
-string GetGuess();
+FText GetGuess();
 void PlayGame();
 bool AskToPlayAgain();
+
+FBullCowGame BCGame;
 
 // Entry Point del Juego
 int main(int argc, const char * argv[]) {
@@ -29,34 +34,44 @@ int main(int argc, const char * argv[]) {
 
 // Implementacion de Prototipos
 bool AskToPlayAgain() {
-    cout << "Desea seguir jugando (s/n)? ";
-    string response = "";
-    getline(cin, response);
-    // cout << "Si?" << (response[0] == 'S' || response[0] == 's');
-    cout << endl;
+    std::cout << "Desea seguir jugando (s/n)? ";
+    FText response = "";
+    getline(std::cin, response);
+    std::cout << std::endl;
     
     return (response[0] == 'S' || response[0] == 's');
 }
 
 void PlayGame() {
-    __cpp_constexpr; int NUMBER_OF_TURNS = 5;
-    for (int count =1 ; count <= NUMBER_OF_TURNS; count++) {
-        string Guess = GetGuess();
-        cout << endl;
+    BCGame.Reset();
+    int32 MaxTries = BCGame.GetMaxTries();
+    
+    // loop el numero de veces que preguntara
+    // TODO cambiar for por while
+    for (int32 count = 1 ; count <= MaxTries; count++) {
+        FText Guess = GetGuess(); // TODO make loop check valid guessing
+        FBullCowCount BullCowCount = BCGame.SubmitGuess(Guess);
+        std::cout << "Bulls = " << BullCowCount.Bulls << std::endl;
+        std::cout << "Cows = " << BullCowCount.Cows << std::endl;
     }
+    
+    // TODO hacer resumen
+    
     return;
 }
 
 void PrintIntro(){
-    __cpp_constexpr; int WORLD_LENGTH = 5;
-    cout << "Bienvenidos a Toros y Vacas, una juego de palabras.\n";
-    cout << "Podras adivinar la palabra de " << WORLD_LENGTH <<" letras en el Isograma que estoy pensando?" << endl;
+    __cpp_constexpr; int32 WORD_LENGTH = BCGame.GetHiddenWordLength();
+    std::cout << "Bienvenidos a Toros y Vacas, una juego de palabras.\n";
+    std::cout << "Podras adivinar la palabra de " << WORD_LENGTH <<" letras en el Isograma que estoy pensando?" << std::endl;
     return;
 }
 
-string GetGuess(){
-    cout << "Ingrese su palabra: ";
-    string Guess = "";
-    getline(cin, Guess);
+FText GetGuess(){
+    int32 CurrentTry = BCGame.GetCurrentTry();
+    std::cout << CurrentTry << " Ingrese su palabra: ";
+    FText Guess = "";
+    
+    getline(std::cin, Guess);
     return Guess;
 }
